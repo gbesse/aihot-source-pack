@@ -1,0 +1,12 @@
+[
+  {"id":"gh-openai-codex","name":"OpenAI Codex releases","repo":"openai/codex","topic":["agents"]},
+  {"id":"gh-browser-use","name":"browser-use releases","repo":"browser-use/browser-use","topic":["agents"]},
+  {"id":"gh-pydantic-ai","name":"Pydantic AI releases","repo":"pydantic/pydantic-ai","topic":["agents"]},
+  {"id":"gh-vercel-ai","name":"Vercel AI SDK releases","repo":"vercel/ai","topic":["agents"]},
+  {"id":"gh-hindsight","name":"Hindsight releases","repo":"vectorize-io/hindsight","topic":["memory"]},
+  {"id":"gh-qdrant","name":"Qdrant releases","repo":"qdrant/qdrant","topic":["retrieval"]},
+  {"id":"gh-milvus","name":"Milvus releases","repo":"milvus-io/milvus","topic":["retrieval"]},
+  {"id":"gh-llama-index","name":"LlamaIndex releases","repo":"run-llama/llama_index","topic":["retrieval"]},
+  {"id":"gh-mcp-python","name":"MCP Python SDK releases","repo":"modelcontextprotocol/python-sdk","topic":["protocols"]},
+  {"id":"gh-openai-python","name":"OpenAI Python SDK releases","repo":"openai/openai-python","topic":["protocols"]}
+]
