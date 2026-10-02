@@ -57,7 +57,7 @@ def check_feed(url, timeout=12):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("export", "validate", "check-live"))
+    parser.add_argument("command", choices=("export", "validate", "preview", "check-live"))
     parser.add_argument("--topic", default="all")
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     parser.add_argument("--lang", choices=LABELS, default="en")
@@ -70,6 +70,11 @@ def main(argv=None):
         data = export(sources, args.topic)
         if args.command == "export":
             print(json.dumps(data, ensure_ascii=False, indent=2))
+            return 0
+        if args.command == "preview":
+            for source in sources:
+                if args.topic == "all" or args.topic in source["topic"]:
+                    print(f"{source['id']} [{', '.join(source['topic'])}] -> https://github.com/{source['repo']}/releases.atom")
             return 0
         if args.command == "validate":
             print(f"{len(data['sources'])} {LABELS[args.lang][0]}, {LABELS[args.lang][1]}")

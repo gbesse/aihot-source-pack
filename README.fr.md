@@ -12,6 +12,8 @@
 
 Ces liens décrivent des projets voisins, sans affiliation.
 
+Exécutez `python3 source_pack.py preview --topic memory` pour voir les identifiants, thèmes et URL Atom exactes avant export. L’aperçu lit uniquement le manifeste fourni, sans requête réseau.
+
 ## Essayer
 
 ```sh
@@ -41,4 +43,4 @@ Dix flux de releases GitHub uniquement. Il ne s’agit pas des sources privées 
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.0-alpha.1
+MIT · v0.1.1
