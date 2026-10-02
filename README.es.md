@@ -12,6 +12,8 @@
 
 Estos enlaces describen proyectos relacionados, sin afiliación.
 
+Ejecute `python3 source_pack.py preview --topic memory` para ver los identificadores, temas y URL Atom exactas antes de exportar. La vista previa solo lee el manifiesto incluido, sin solicitudes de red.
+
 ## Probar
 
 ```sh
@@ -41,4 +43,4 @@ Solo diez feeds de versiones GitHub. No es la lista privada de producción de AI
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.0-alpha.1
+MIT · v0.1.1

@@ -22,6 +22,8 @@ python3 source_pack.py validate --lang en
 
 Exports ten official GitHub release Atom feeds in AIHOT’s `industry/sources.json` schema. Filter by `agents`, `memory`, `retrieval`, or `protocols`; `check-live` verifies each feed with TLS and XML parsing.
 
+Run `python3 source_pack.py preview --topic memory` to inspect feed IDs, topics and exact Atom URLs before export. Preview reads only the bundled manifest; it performs no network request.
+
 ## Use with your data
 
 ```sh
@@ -41,4 +43,4 @@ Ten GitHub release feeds only. This is not AIHOT’s private production source l
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.0-alpha.1
+MIT · v0.1.1
