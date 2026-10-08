@@ -43,4 +43,8 @@ Solo diez feeds de versiones GitHub. No es la lista privada de producción de AI
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.1
+MIT · v0.1.2
+
+## Varios temas
+
+Una fuente puede declarar varios temas en `sources.json`; `export` los conserva todos en los `tags` de AIHOT. Ejecute `python3 source_pack.py export` para revisar el JSON sin conexión.
