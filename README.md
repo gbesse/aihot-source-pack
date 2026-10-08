@@ -43,4 +43,8 @@ Ten GitHub release feeds only. This is not AIHOT’s private production source l
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.1
+MIT · v0.1.2
+
+## Multiple topics
+
+A source can list several topics in `sources.json`; `export` now preserves every topic in its AIHOT `tags`. Run `python3 source_pack.py export` to inspect the JSON offline.

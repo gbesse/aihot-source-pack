@@ -40,7 +40,7 @@ def export(sources, topic="all"):
          "config": {"feedUrl": f"https://github.com/{s['repo']}/releases.atom", "_aihot": {"initialBackfillLimit": 5}},
          "tier": "T1", "first_party": True, "owner_entity_id": s["repo"].split("/")[0],
          "participation_mode": "editorial", "interval_minutes": 180,
-         "tags": [s["topic"][0]], "site_fulltext": False, "syndicate_fulltext": False}
+          "tags": list(s["topic"]), "site_fulltext": False, "syndicate_fulltext": False}
         for s in sources]}
 
 

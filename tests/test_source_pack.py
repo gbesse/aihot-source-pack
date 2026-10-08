@@ -30,3 +30,7 @@ class SourcePackTests(unittest.TestCase):
             self.assertEqual(main(["preview", "--topic", "memory"]), 0)
         self.assertIn("gh-hindsight [memory] -> https://github.com/", output.getvalue())
         self.assertNotIn("gh-qdrant", output.getvalue())
+
+    def test_export_keeps_all_declared_topics(self):
+        source = {"id": "sample", "name": "Sample", "repo": "example/sample", "topic": ["agents", "protocols"]}
+        self.assertEqual(export([source])["sources"][0]["tags"], ["agents", "protocols"])

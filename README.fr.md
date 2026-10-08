@@ -43,4 +43,8 @@ Dix flux de releases GitHub uniquement. Il ne s’agit pas des sources privées 
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.1
+MIT · v0.1.2
+
+## Plusieurs thèmes
+
+Une source peut déclarer plusieurs thèmes dans `sources.json` ; `export` les conserve tous dans les `tags` AIHOT. Exécutez `python3 source_pack.py export` pour examiner le JSON hors ligne.
