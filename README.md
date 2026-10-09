@@ -48,3 +48,7 @@ MIT · v0.1.2
 ## Multiple topics
 
 A source can list several topics in `sources.json`; `export` now preserves every topic in its AIHOT `tags`. Run `python3 source_pack.py export` to inspect the JSON offline.
+
+## Contrôle d’adoption · Adoption check · Comprobación de adopción
+
+[Français : essayer un cas concret](examples/adoption-check.md) · [English: try a concrete case](examples/adoption-check.md) · [Español: pruebe un caso concreto](examples/adoption-check.md).
