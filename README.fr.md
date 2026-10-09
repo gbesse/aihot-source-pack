@@ -48,3 +48,7 @@ MIT · v0.1.2
 ## Plusieurs thèmes
 
 Une source peut déclarer plusieurs thèmes dans `sources.json` ; `export` les conserve tous dans les `tags` AIHOT. Exécutez `python3 source_pack.py export` pour examiner le JSON hors ligne.
+
+## Contrôle d’adoption
+
+[Essayer un cas concret et vérifier ses limites](examples/adoption-check.md).

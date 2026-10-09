@@ -48,3 +48,7 @@ MIT · v0.1.2
 ## Varios temas
 
 Una fuente puede declarar varios temas en `sources.json`; `export` los conserva todos en los `tags` de AIHOT. Ejecute `python3 source_pack.py export` para revisar el JSON sin conexión.
+
+## Comprobación de adopción
+
+[Pruebe un caso concreto y compruebe sus límites](examples/adoption-check.md).
