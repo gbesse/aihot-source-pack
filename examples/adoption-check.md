@@ -40,3 +40,15 @@ FR : adaptez une copie de la fixture locale à cette situation, puis vérifiez l
 EN: adapt a copy of the local fixture to this situation, then check the behavior described above. Values are illustrative, not measured Jev output.
 
 ES: adapte una copia de la fixture local a esta situación y compruebe el comportamiento descrito arriba. Los valores son ilustrativos, no resultados Jev medidos.
+
+## Second cas · Second case · Segundo caso
+
+```text
+topic=memory; action=preview
+```
+
+**FR :** Inspectez les flux `memory` avant export. Une URL ou un identifiant inattendu doit être corrigé dans le manifeste ; `preview` ne teste pas la disponibilité du flux.
+
+**EN:** Inspect the `memory` feeds before export. Correct an unexpected URL or ID in the manifest; `preview` does not test feed availability.
+
+**ES:** Revise los feeds `memory` antes de exportar. Corrija una URL o un ID inesperado en el manifiesto; `preview` no comprueba la disponibilidad del feed.
