@@ -52,3 +52,7 @@ A source can list several topics in `sources.json`; `export` now preserves every
 ## Contrôle d’adoption · Adoption check · Comprobación de adopción
 
 [Français : essayer un cas concret](examples/adoption-check.md) · [English: try a concrete case](examples/adoption-check.md) · [Español: pruebe un caso concreto](examples/adoption-check.md).
+
+## Inspectable feed checks
+
+`python3 source_pack.py check-live --topic memory --json` emits one receipt per feed: observation time, exact Atom namespace validation, entry count and SHA256 of the received bytes. Empty feeds are valid with zero entries. A hash identifies this capture; it is not a signature, proof of release quality or evidence of human adoption. XML with a misleading `*feed` suffix is rejected. HTTPS is required for the request and redirects. Failed checks contain generic error codes, without transport stderr. Strict string fields also prevent malformed manifests from crashing before validation.
