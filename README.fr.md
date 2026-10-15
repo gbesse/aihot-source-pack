@@ -52,3 +52,7 @@ Une source peut déclarer plusieurs thèmes dans `sources.json` ; `export` les c
 ## Contrôle d’adoption
 
 [Essayer un cas concret et vérifier ses limites](examples/adoption-check.md).
+
+## Contrôles de flux inspectables
+
+`python3 source_pack.py check-live --topic memory --json --lang fr` produit un reçu par flux : date d’observation, validation exacte de l’espace de noms Atom, nombre d’entrées et SHA256 des octets reçus. Un flux vide reste valide avec zéro entrée. Le hash identifie cette capture ; il ne constitue ni signature, ni preuve de qualité des releases, ni adoption humaine. Un XML dont le suffixe `*feed` trompeur ressemble à Atom est refusé. La requête et ses redirections exigent HTTPS. Les échecs utilisent des codes génériques sans stderr du transport. Des champs textuels stricts évitent aussi les plantages sur manifestes mal formés.

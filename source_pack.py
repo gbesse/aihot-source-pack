@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Export checked public release feeds to AIHOT's industry/sources.json format."""
 import argparse
+import hashlib
+from datetime import datetime, timezone
 import json
 import re
 import subprocess
@@ -9,6 +11,12 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 MANIFEST = Path(__file__).parent / "sources.json"
+ERRORS = {
+    "en": "Invalid source manifest or topic.",
+    "fr": "Manifeste de sources ou thème invalide.",
+    "es": "Manifiesto de fuentes o tema no válido.",
+}
+ATOM = "{http://www.w3.org/2005/Atom}"
 LABELS = {
     "en": ("sources", "valid", "invalid"),
     "fr": ("sources", "valides", "invalides"),
@@ -24,6 +32,8 @@ def load_sources(path=MANIFEST):
     for source in data:
         if not isinstance(source, dict) or not all(k in source for k in ("id", "name", "repo", "topic")):
             raise ValueError("every source needs id, name, repo and topic")
+        if not all(isinstance(source[k], str) and source[k].strip() for k in ("id", "name", "repo")):
+            raise ValueError("invalid_source_fields")
         if source["id"] in ids or not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", source["repo"]):
             raise ValueError("duplicate source id or invalid repository")
         if not isinstance(source["topic"], list) or not source["topic"] or not all(isinstance(x, str) and x for x in source["topic"]):
@@ -44,15 +54,34 @@ def export(sources, topic="all"):
         for s in sources]}
 
 
-def check_feed(url, timeout=12):
+def inspect_atom(content):
+    if not isinstance(content, bytes) or len(content) > 1_000_000:
+        raise ValueError("invalid_feed_size")
+    root = ET.fromstring(content)
+    if root.tag != ATOM + "feed":
+        raise ValueError("not_atom_feed")
+    entries = root.findall(ATOM + "entry")
+    return {"valid": True, "entry_count": len(entries), "content_sha256": hashlib.sha256(content).hexdigest()}
+
+
+def feed_receipt(url, timeout=12):
+    observed = datetime.now(timezone.utc).isoformat()
+    result = {"url": url, "observed_at": observed, "valid": False}
     try:
-        response = subprocess.run(["curl", "-fsSL", "--max-time", str(timeout), "--max-filesize", "1000000", url], capture_output=True, timeout=timeout + 2)
+        response = subprocess.run(["curl", "-fsSL", "--proto", "=https", "--proto-redir", "=https", "--max-time", str(timeout), "--max-filesize", "1000000", url], capture_output=True, timeout=timeout + 2)
         if response.returncode:
-            return False
-        root = ET.fromstring(response.stdout)
-        return root.tag.endswith("feed") or root.tag.endswith("rss")
-    except (OSError, subprocess.TimeoutExpired, ET.ParseError, ValueError):
-        return False
+            result["error_code"] = "transport_failed"
+        else:
+            result.update(inspect_atom(response.stdout))
+    except (OSError, subprocess.TimeoutExpired):
+        result["error_code"] = "transport_failed"
+    except (ET.ParseError, ValueError):
+        result["error_code"] = "invalid_atom"
+    return result
+
+
+def check_feed(url, timeout=12):
+    return feed_receipt(url, timeout)["valid"]
 
 
 def main(argv=None):
@@ -61,12 +90,13 @@ def main(argv=None):
     parser.add_argument("--topic", default="all")
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     parser.add_argument("--lang", choices=LABELS, default="en")
+    parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     try:
         sources = load_sources(args.manifest)
         topics = {topic for source in sources for topic in source["topic"]}
         if args.topic != "all" and args.topic not in topics:
-            parser.error("unknown topic: " + args.topic)
+            raise ValueError("unknown_topic")
         data = export(sources, args.topic)
         if args.command == "export":
             print(json.dumps(data, ensure_ascii=False, indent=2))
@@ -79,12 +109,15 @@ def main(argv=None):
         if args.command == "validate":
             print(f"{len(data['sources'])} {LABELS[args.lang][0]}, {LABELS[args.lang][1]}")
             return 0
-        results = [(s["id"], check_feed(s["config"]["feedUrl"])) for s in data["sources"]]
-        for name, okay in results:
-            print(f"{name}: {'OK' if okay else 'FAIL'}")
-        return 0 if all(okay for _, okay in results) else 1
-    except (OSError, ValueError, json.JSONDecodeError) as error:
-        print(str(error), file=sys.stderr)
+        results = [dict(feed_receipt(s["config"]["feedUrl"]), id=s["id"]) for s in data["sources"]]
+        if args.json:
+            print(json.dumps({"sources": results, "valid": all(row["valid"] for row in results)}, ensure_ascii=False, indent=2))
+        else:
+            for row in results:
+                print(f"{row['id']}: {LABELS[args.lang][1] if row['valid'] else LABELS[args.lang][2]}")
+        return 0 if all(row["valid"] for row in results) else 1
+    except (OSError, ValueError, TypeError) as error:
+        print(ERRORS[args.lang], file=sys.stderr)
         return 2
 
 
