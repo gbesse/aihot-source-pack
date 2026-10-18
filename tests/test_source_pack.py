@@ -76,3 +76,35 @@ class FeedReceiptTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()) as out:
                 self.assertEqual(main(['check-live','--topic','memory','--json']),0)
             self.assertTrue(json.loads(out.getvalue())['valid'])
+
+
+class ExclusiveExportTests(unittest.TestCase):
+    def test_complete_utf8_export_has_private_mode_and_never_replaces_destination(self):
+        import json,stat
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from source_pack import write_export
+        with TemporaryDirectory() as directory:
+            path=Path(directory)/'sources.json';data={'sources':[{'name':'Français · Español'}]}
+            write_export(data,path)
+            self.assertEqual(json.loads(path.read_text()),data);self.assertEqual(stat.S_IMODE(path.stat().st_mode),0o600)
+            before=path.read_bytes()
+            with self.assertRaises(FileExistsError):write_export({'sources':[]},path)
+            self.assertEqual(path.read_bytes(),before);self.assertEqual(sorted(p.name for p in path.parent.iterdir()),['sources.json'])
+
+    def test_cli_file_exports_are_quiet_and_invalid_destinations_are_localized(self):
+        from contextlib import redirect_stderr
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from source_pack import ERRORS
+        import json
+        with TemporaryDirectory() as directory:
+            for lang in ('fr','en','es'):
+                path=Path(directory)/(lang+'.json')
+                with redirect_stdout(io.StringIO()) as out:
+                    self.assertEqual(main(['export','--lang',lang,'--topic','memory','--output',str(path)]),0)
+                self.assertEqual(out.getvalue(),'');self.assertEqual(json.loads(path.read_text()),export(load_sources(),'memory'))
+                for command in ('export','preview'):
+                    with redirect_stderr(io.StringIO()) as error:
+                        self.assertEqual(main([command,'--lang',lang,'--output',str(path)]),2)
+                    self.assertIn(ERRORS[lang],error.getvalue())

@@ -56,3 +56,6 @@ Una fuente puede declarar varios temas en `sources.json`; `export` los conserva 
 ## Comprobaciones de fuentes inspeccionables
 
 `python3 source_pack.py check-live --topic memory --json --lang es` genera un recibo por fuente: fecha de observación, validación exacta del espacio de nombres Atom, número de entradas y SHA256 de los bytes recibidos. Una fuente vacía sigue siendo válida con cero entradas. El hash identifica la captura; no es firma, prueba de calidad de versiones ni adopción humana. Rechaza XML con un sufijo engañoso `*feed`. Solicitudes y redirecciones requieren HTTPS. Los fallos contienen códigos genéricos sin stderr del transporte. Campos de texto estrictos evitan también fallos con manifiestos incorrectos.
+
+
+Exporte un archivo completo sin sobrescribir configuración: `python3 source_pack.py export --topic memory --lang es --output sources-export.json`. El archivo UTF8 se publica en un paso con permisos 600; un destino existente o no disponible falla con código 2 sin cambiarlo. Sin `--output` se conserva la salida estándar. La opción solo pertenece a `export` y no realiza importación remota.

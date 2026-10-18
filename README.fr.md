@@ -56,3 +56,6 @@ Une source peut déclarer plusieurs thèmes dans `sources.json` ; `export` les c
 ## Contrôles de flux inspectables
 
 `python3 source_pack.py check-live --topic memory --json --lang fr` produit un reçu par flux : date d’observation, validation exacte de l’espace de noms Atom, nombre d’entrées et SHA256 des octets reçus. Un flux vide reste valide avec zéro entrée. Le hash identifie cette capture ; il ne constitue ni signature, ni preuve de qualité des releases, ni adoption humaine. Un XML dont le suffixe `*feed` trompeur ressemble à Atom est refusé. La requête et ses redirections exigent HTTPS. Les échecs utilisent des codes génériques sans stderr du transport. Des champs textuels stricts évitent aussi les plantages sur manifestes mal formés.
+
+
+Exportez un fichier complet sans écraser une configuration existante : `python3 source_pack.py export --topic memory --lang fr --output sources-export.json`. Le fichier UTF-8 est publié en une seule étape avec permissions 600 ; une destination existante ou indisponible échoue avec le code 2 et reste inchangée. Sans `--output`, la sortie standard historique reste disponible. Cette option appartient uniquement à `export` et n’effectue aucun import distant.
