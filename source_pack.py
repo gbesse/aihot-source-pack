@@ -5,6 +5,8 @@ import hashlib
 from datetime import datetime, timezone
 import json
 import re
+import os
+import tempfile
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -84,6 +86,21 @@ def check_feed(url, timeout=12):
     return feed_receipt(url, timeout)["valid"]
 
 
+def write_export(data, path):
+    """Publish a complete UTF8 export without replacing an existing destination."""
+    path = Path(path)
+    content = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    descriptor, temporary = tempfile.mkstemp(prefix=".source-pack-", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as output:
+            output.write(content)
+            output.flush()
+            os.fsync(output.fileno())
+        os.link(temporary, path)
+    finally:
+        os.unlink(temporary)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("export", "validate", "preview", "check-live"))
@@ -91,15 +108,21 @@ def main(argv=None):
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     parser.add_argument("--lang", choices=LABELS, default="en")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--output", type=Path, help="FR : export exclusif dans un fichier / EN: exclusive file export / ES: exportación exclusiva a archivo")
     args = parser.parse_args(argv)
     try:
+        if args.output is not None and args.command != "export":
+            raise ValueError("output_requires_export")
         sources = load_sources(args.manifest)
         topics = {topic for source in sources for topic in source["topic"]}
         if args.topic != "all" and args.topic not in topics:
             raise ValueError("unknown_topic")
         data = export(sources, args.topic)
         if args.command == "export":
-            print(json.dumps(data, ensure_ascii=False, indent=2))
+            if args.output is not None:
+                write_export(data, args.output)
+            else:
+                print(json.dumps(data, ensure_ascii=False, indent=2))
             return 0
         if args.command == "preview":
             for source in sources:

@@ -56,3 +56,6 @@ A source can list several topics in `sources.json`; `export` now preserves every
 ## Inspectable feed checks
 
 `python3 source_pack.py check-live --topic memory --json` emits one receipt per feed: observation time, exact Atom namespace validation, entry count and SHA256 of the received bytes. Empty feeds are valid with zero entries. A hash identifies this capture; it is not a signature, proof of release quality or evidence of human adoption. XML with a misleading `*feed` suffix is rejected. HTTPS is required for the request and redirects. Failed checks contain generic error codes, without transport stderr. Strict string fields also prevent malformed manifests from crashing before validation.
+
+
+Export a complete file without replacing existing configuration: `python3 source_pack.py export --topic memory --lang en --output sources-export.json`. The UTF8 file is published in one step with mode 600; an existing or unavailable destination fails with exit 2 and remains unchanged. Without `--output`, existing stdout behavior remains. This option belongs only to `export` and performs no remote import.
