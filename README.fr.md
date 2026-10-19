@@ -43,7 +43,7 @@ Dix flux de releases GitHub uniquement. Il ne s’agit pas des sources privées 
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.2
+MIT · v0.3.1
 
 ## Plusieurs thèmes
 
@@ -59,3 +59,14 @@ Une source peut déclarer plusieurs thèmes dans `sources.json` ; `export` les c
 
 
 Exportez un fichier complet sans écraser une configuration existante : `python3 source_pack.py export --topic memory --lang fr --output sources-export.json`. Le fichier UTF-8 est publié en une seule étape avec permissions 600 ; une destination existante ou indisponible échoue avec le code 2 et reste inchangée. Sans `--output`, la sortie standard historique reste disponible. Cette option appartient uniquement à `export` et n’effectue aucun import distant.
+
+## Flux valide ne signifie pas activité récente
+
+`check-live --max-age-days 90` ajoute une politique d’âge sur les entrées Atom. Par défaut `--timestamp-field updated` mesure une activité de modification, pas nécessairement une nouvelle publication ; choisir `published` pour exiger cette date, sans repli silencieux. Le reçu distingue récent, ancien, date inconnue, flux vide et date future incohérente. Les dates doivent préciser leur fuseau ; la date globale du flux ne remplace jamais celles des entrées. Une date située plus de cinq minutes dans le futur échoue. Un flux XML valide mais ne satisfaisant pas la politique donne une sortie 1. Sans limite d’âge, la validation structurelle précédente reste identique. Les dates déclarées par l’éditeur ne prouvent ni qualité, ni adoption humaine.
+
+```sh
+python3 source_pack.py check-live --topic memory --max-age-days 90 --timestamp-field updated --lang fr --json
+python3 examples/feed-freshness.py
+```
+
+La seconde commande compare hors ligne une publication ancienne modifiée récemment, avec une horloge et un flux synthétiques. Les nouveaux tests n’effectuent aucune requête distante.
