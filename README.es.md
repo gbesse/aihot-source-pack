@@ -43,7 +43,7 @@ Solo diez feeds de versiones GitHub. No es la lista privada de producción de AI
 python3 -m unittest discover -s tests -v
 ```
 
-MIT · v0.1.2
+MIT · v0.3.1
 
 ## Varios temas
 
@@ -59,3 +59,14 @@ Una fuente puede declarar varios temas en `sources.json`; `export` los conserva 
 
 
 Exporte un archivo completo sin sobrescribir configuración: `python3 source_pack.py export --topic memory --lang es --output sources-export.json`. El archivo UTF8 se publica en un paso con permisos 600; un destino existente o no disponible falla con código 2 sin cambiarlo. Sin `--output` se conserva la salida estándar. La opción solo pertenece a `export` y no realiza importación remota.
+
+## Un flujo válido no implica actividad reciente
+
+`check-live --max-age-days 90` añade una política de edad de entradas Atom. Por defecto `--timestamp-field updated` mide modificaciones, no necesariamente publicaciones nuevas; elegir `published` para exigir ese campo sin alternativa silenciosa. Distingue reciente, antiguo, fecha desconocida, flujo vacío y fecha futura incoherente. Las fechas necesitan zona; la fecha global del flujo nunca sustituye las de entradas. Fechas más de cinco minutos futuras fallan. XML válido que incumple la política sale con 1. Sin límite de edad conserva la validación estructural anterior. Las fechas declaradas por el editor no prueban calidad ni adopción humana.
+
+```sh
+python3 source_pack.py check-live --topic memory --max-age-days 90 --timestamp-field updated --lang es --json
+python3 examples/feed-freshness.py
+```
+
+El segundo comando compara una publicación antigua editada recientemente con flujo y reloj sintéticos sin red. Las pruebas nuevas no hacen peticiones remotas.
