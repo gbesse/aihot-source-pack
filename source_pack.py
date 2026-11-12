@@ -194,3 +194,22 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
+def feed_identity_receipt(content,expected_host='github.com'):
+    from urllib.parse import urlsplit
+    error='Identité de flux invalide / Invalid feed identity / Identidad de flujo inválida'
+    if not isinstance(content,bytes)or len(content)>1000000 or not isinstance(expected_host,str)or not expected_host:raise ValueError(error)
+    root=ET.fromstring(content)
+    if root.tag!=ATOM+'feed':raise ValueError(error)
+    seen=set();findings=[];entries=root.findall(ATOM+'entry')
+    for index,entry in enumerate(entries):
+        identifier=(entry.findtext(ATOM+'id')or'').strip()
+        if not identifier:findings.append({'entry_index':index,'code':'missing_entry_id'})
+        elif identifier in seen:findings.append({'entry_index':index,'code':'duplicate_entry_id'})
+        seen.add(identifier)
+        for link in entry.findall(ATOM+'link'):
+            if link.get('rel','alternate')!='alternate':continue
+            try:u=urlsplit(link.get('href',''))
+            except ValueError:findings.append({'entry_index':index,'code':'invalid_link'});continue
+            if u.scheme!='https'or u.hostname!=expected_host or u.username or u.password:findings.append({'entry_index':index,'code':'unexpected_link_origin'})
+    return {'valid':not findings,'entries':len(entries),'findings':findings,'publisher_authenticated':False,'article_content_included':False}
