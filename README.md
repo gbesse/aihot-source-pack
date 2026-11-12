@@ -70,3 +70,12 @@ python3 examples/feed-freshness.py
 ```
 
 The second command compares an old release edited recently, using an offline synthetic feed and clock. New tests make no remote requests.
+
+
+## 2026-11-12 — FR / EN / ES
+
+FR : Contrôler les identifiants Atom dupliqués et les origines de liens sans confondre format valide et authenticité.
+
+EN: Check duplicate Atom IDs and link origins without confusing format validity and authenticity.
+
+ES: Verificar IDs Atom duplicados y orígenes de enlaces sin confundir formato válido y autenticidad.
